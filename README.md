@@ -1,7 +1,8 @@
 designPattern
 =============
 
-Factory, FacoryMethod, AbstractFactory
+1. Factory, FacoryMethod, AbstractFactory
+23. visitor
 --------------------------------------
 
 ### Factory
