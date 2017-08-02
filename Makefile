@@ -1,4 +1,5 @@
 SRC=01_abstractfactory.cpp \
+	20_state.cpp \
 	23_visitor.cpp
 EXE=$(subst .cpp,.bin,$(SRC))
 CPPFLAGS=-std=c++11 -MMD -g
