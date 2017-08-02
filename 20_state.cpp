@@ -63,10 +63,8 @@ public:
 class State {
 private:
 protected:
-  CContext *_ctx;
-
 public:
-  State(CContext *ctx) : _ctx(ctx){};
+  State(){};
   virtual ~State(){};
 };
 
@@ -76,14 +74,18 @@ public:
 // @ interface
 class IStateApp : public State {
 private:
+protected:
+  static IStateApp *toStateA();
+  static IStateApp *toStateB();
+
 public:
-  IStateApp(CContext *ctx) : State(ctx){};
+  IStateApp() : State(){};
   virtual ~IStateApp(){};
 
-  virtual IStateApp *toStateA(){};
-  virtual IStateApp *toStateB(){};
-  virtual void EventA() = 0;
-  virtual void EventB() = 0;
+  static IStateApp *Initialize();
+
+  virtual IStateApp *EventA(CContext *ctx) = 0;
+  virtual IStateApp *EventB(CContext *ctx) = 0;
 };
 
 //#########################################
@@ -92,33 +94,49 @@ public:
 class State_A : public IStateApp {
 private:
 public:
-  State_A(CContext *ctx) : IStateApp(ctx){};
-  virtual ~State_A(){};
-  void EventA() {
+  State_A() : IStateApp() { std::cout << "State_A::" << __FUNCTION__ << "\n"; };
+  virtual ~State_A() { std::cout << "State_A::" << __FUNCTION__ << "\n"; };
+  //-----------------------------
+  IStateApp *EventA(CContext *ctx) {
     std::cout << "State_A::" << __func__ << std::endl;
-    _ctx->Context_Method_1();
+    ctx->Context_Method_1();
+    return toStateB();
   };
-  void EventB() { std::cout << "State_A::" << __func__ << std::endl; };
-  IStateApp *toStateA(CContext *ctx) {
-    static IStateApp *state = new State_A{ctx};
-    return state;
+  //-----------------------------
+  IStateApp *EventB(CContext *ctx) {
+    std::cout << "State_A::" << __func__ << std::endl;
+    return toStateA();
   };
+  //-----------------------------
 };
 
 class State_B : public IStateApp {
 private:
 public:
-  State_B(CContext *ctx) : IStateApp(ctx){};
-  virtual ~State_B(){};
-  void EventA() { std::cout << "State_B::" << __func__ << std::endl; };
-  void EventB() {
+  State_B() : IStateApp() { std::cout << "State_B::" << __FUNCTION__ << "\n"; };
+  virtual ~State_B() { std::cout << "State_B::" << __FUNCTION__ << "\n"; };
+  //-----------------------------
+  IStateApp *EventA(CContext *ctx) {
     std::cout << "State_B::" << __func__ << std::endl;
-    _ctx->Context_Method_2();
+    return this;
   };
-  IStateApp *toStateB(CContext *ctx) {
-    static IStateApp *state = new State_B{ctx};
-    return state;
+  //-----------------------------
+  IStateApp *EventB(CContext *ctx) {
+    std::cout << "State_B::" << __func__ << std::endl;
+    ctx->Context_Method_2();
+    return toStateA();
   };
+  //-----------------------------
+};
+
+IStateApp *IStateApp::Initialize() { return toStateA(); };
+IStateApp *IStateApp::toStateA() {
+  static State_A state;
+  return &state;
+};
+IStateApp *IStateApp::toStateB() {
+  static State_B state;
+  return &state;
 };
 
 //#########################################
@@ -129,15 +147,18 @@ int main(int argc, char const *argv[]) {
   std::ofstream ofs{"output.log"};
   CHandler *hndl = new CTerminalHandler{ofs};
   CContext ctx{hndl};
-  IStateApp *p = new State_A(&ctx);
-  p->EventA();
-  p->EventB();
-  delete (p);
-
-  p = new State_B(&ctx);
-  p->EventA();
-  p->EventB();
-  delete (p);
+  // IStateApp *p = new State_A(&ctx);
+  std::cout << "-------" << std::endl;
+  IStateApp *p = IStateApp::Initialize();
+  std::cout << "-------" << std::endl;
+  p = p->EventA(&ctx);
+  std::cout << "-------" << std::endl;
+  p = p->EventA(&ctx);
+  std::cout << "-------" << std::endl;
+  p = p->EventB(&ctx);
+  std::cout << "-------" << std::endl;
+  p = p->EventB(&ctx);
+  std::cout << "-------" << std::endl;
 
   return 0;
 }
