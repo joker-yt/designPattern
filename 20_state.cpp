@@ -80,10 +80,15 @@ public:
   IStateApp(CContext *ctx) : State(ctx){};
   virtual ~IStateApp(){};
 
+  virtual IStateApp *toStateA(){};
+  virtual IStateApp *toStateB(){};
   virtual void EventA() = 0;
   virtual void EventB() = 0;
 };
 
+//#########################################
+// ConcreteStates
+//#########################################
 class State_A : public IStateApp {
 private:
 public:
@@ -94,6 +99,10 @@ public:
     _ctx->Context_Method_1();
   };
   void EventB() { std::cout << "State_A::" << __func__ << std::endl; };
+  IStateApp *toStateA(CContext *ctx) {
+    static IStateApp *state = new State_A{ctx};
+    return state;
+  };
 };
 
 class State_B : public IStateApp {
@@ -106,8 +115,15 @@ public:
     std::cout << "State_B::" << __func__ << std::endl;
     _ctx->Context_Method_2();
   };
+  IStateApp *toStateB(CContext *ctx) {
+    static IStateApp *state = new State_B{ctx};
+    return state;
+  };
 };
 
+//#########################################
+// main
+//#########################################
 int main(int argc, char const *argv[]) {
 
   std::ofstream ofs{"output.log"};
