@@ -105,7 +105,7 @@ public:
   //-----------------------------
   IStateApp *EventB(CContext *ctx) {
     std::cout << "State_A::" << __func__ << std::endl;
-    return toStateA();
+    return this;
   };
   //-----------------------------
 };
