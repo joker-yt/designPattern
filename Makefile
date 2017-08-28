@@ -6,6 +6,7 @@ SRC=01_abstractfactory.cpp \
 EXE=$(subst .cpp,.bin,$(SRC))
 CPPFLAGS=-std=c++11 -MMD -g
 
+.PHONY: all clean check-syntax
 all: $(EXE)
 -include $(DEPS)
 
@@ -15,3 +16,5 @@ all: $(EXE)
 
 clean:
 	rm -fr *.bin *.gch *.d
+check-syntax:
+	$(CXX) -o null -fsyntax-only $(CHK_SOURCES) $(INCLUDES) $(CPPFLAGS)
