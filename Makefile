@@ -1,5 +1,6 @@
 SRC=01_abstractfactory.cpp \
 	05_singleton.cpp \
+	17_mediator.cpp \
 	20_state.cpp \
 	23_visitor.cpp
 EXE=$(subst .cpp,.bin,$(SRC))
