@@ -2,11 +2,12 @@ SRC=01_abstractfactory.cpp \
 	05_singleton.cpp \
 	17_mediator.cpp \
 	20_state.cpp \
-	23_visitor.cpp
+	23_visitor.cpp \
+	XX_strategy_enum.cpp \
+	XX_factory_enum.cpp
 EXE=$(subst .cpp,.bin,$(SRC))
 CPPFLAGS=-std=c++11 -MMD -g
 
-.PHONY: all clean check-syntax
 all: $(EXE)
 -include $(DEPS)
 
@@ -16,5 +17,3 @@ all: $(EXE)
 
 clean:
 	rm -fr *.bin *.gch *.d
-check-syntax:
-	$(CXX) -o null -fsyntax-only $(CHK_SOURCES) $(INCLUDES) $(CPPFLAGS)
